@@ -1,0 +1,31 @@
+import torch.nn as nn
+a=torch.reand((2,1,1,28))
+a.size()
+
+
+a.view(-1, 28).size()
+
+
+
+class CVModel(nn.Module):
+    def __init__(self):
+        self.conv_1=nn.Conv2d(1, 32, (3, 3)) # фильтры и их количество
+        self.conv_2= nn.Conv2d(32, 64, (3, 3))
+        self.pool_1=nn.MaxPool2d((2, 2)) # выделение максимального значения окна,  сокращение картинки в 2 раза 
+        self.conv_3=nn.Conv2d(64, 128, (3, 3))
+        self.conv_4=nn.Conv2d(128, 128, (3, 3))
+        self.pool_2= nn.MaxPool2d((2, 2))
+        self.glob_pool = nn.MaxPool2d(28, 28)
+        self.linear = nn.Linear(128,26)
+        self.softmax= nn.Softmax()
+        
+    def forward(self, x):
+        res= self.conv_1(x)
+        res= self.conv_2(res)
+        res= self.pool_1(res)
+        res= self.conv_3(res)
+        res= self.conv_4(res)
+        res= self.pool_2(res)
+        res= self.glob_pool(res)
+        res= self.linear(res.view(-1, 28))
+        return self.softmax(res)
